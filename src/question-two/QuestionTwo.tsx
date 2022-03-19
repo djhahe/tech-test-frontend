@@ -1,24 +1,39 @@
-import React from "react"
-import { IAppTabContainer } from "../common/types"
+import React, { useEffect, useState, useCallback } from 'react';
+import { IAppTabContainer, ResourceSchedule } from '../common/types';
+import { getResourceAllocation } from '../helper/resourceSchedule';
 
-import { SectionGroup } from "../components/section/SectionGroup"
-import { SectionPanel } from "../components/section/SectionPanel"
-
-interface ResourceSchedule {
-  resourceName: string
-  resourceId: number
-  allocations: {
-    allocType: 'job' | 'activity',
-    name: string,
-    start: string,
-    end: string
-  }[]
-}
+import { SectionGroup } from '../components/section/SectionGroup';
+import { SectionPanel } from '../components/section/SectionPanel';
 
 export const QuestionTwo: React.FC<IAppTabContainer> = (props) => {
+  const [result, setResult] = useState<ResourceSchedule[]>([]);
+
+  const fetchData = useCallback(async () => {
+    const [jobs, jobAllocations, activities, activitiesAllocations, resources] = await Promise.all([
+      props.service.getJobs(),
+      props.service.getJobAllocations(),
+      props.service.getActivities(),
+      props.service.getActivityAllocations(),
+      props.service.getResources(),
+    ]);
+
+    const resourceSchedule = resources.map((resource): ResourceSchedule => {
+      return {
+        resourceName: resource.name,
+        resourceId: resource.id,
+        allocations: getResourceAllocation(jobs, jobAllocations, activities, activitiesAllocations, resource),
+      };
+    });
+    setResult(resourceSchedule);
+  }, [props.service]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
   return (
     <SectionGroup>
-      <SectionPanel>Please refer to INSTRUCTIONS.md</SectionPanel>
+      <SectionPanel>{JSON.stringify(result)} </SectionPanel>
     </SectionGroup>
-  )
-}
+  );
+};
