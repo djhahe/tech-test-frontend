@@ -1,0 +1,25 @@
+.question_3 {
+  height: calc(100vh - 126px);
+  .main__container {
+    height: 100%;
+    flex-direction: column;
+    .job__container {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      .job__list {
+        background-color: var(--sky-blue);
+        width: 30%;
+        overflow: auto;
+      }
+      .job__details {
+        width: 70%;
+        overflow: auto;
+        .job__detail {
+          height: 150px;
+          background-color: var(--sky-blue);
+          margin: 20px;
+        }
+      }
+    }
+  }
+}

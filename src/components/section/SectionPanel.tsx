@@ -1,3 +1,9 @@
-import React from "react"
+import React from 'react';
 
-export const SectionPanel: React.FC = (props) => <div>{props.children}</div>
+interface SectionPanelProps {
+  className?: string;
+}
+
+export const SectionPanel: React.FC<SectionPanelProps> = (props) => (
+  <div className={props.className}>{props.children}</div>
+);

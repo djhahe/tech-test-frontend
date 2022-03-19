@@ -1,0 +1,18 @@
+.sidebar {
+  width: 50px;
+  background-color: var(--dark-blue);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .icon-circle {
+    width: 36px;
+    height: 36px;
+    background-color: var(--gray);
+    border-radius: 50%;
+    margin: 5px 0;
+  }
+  .icon-circle__bottom {
+    position: absolute;
+    bottom: 0;
+  }
+}

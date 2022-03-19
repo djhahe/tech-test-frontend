@@ -1,0 +1,10 @@
+.header {
+  background-color: var(--blue);
+  flex: 0 1 auto;
+  align-items: center;
+  font-size: 2em;
+  .header_content {
+    margin: 20px;
+    color: var(--white);
+  }
+}

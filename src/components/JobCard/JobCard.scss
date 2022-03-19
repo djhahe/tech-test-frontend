@@ -1,0 +1,23 @@
+.job__section {
+  .job__section__content {
+    padding: 15px;
+    background-color: var(--white);
+    margin: 20px;
+    .job__title {
+      padding-bottom: 30px;
+    }
+  }
+  .job__datetime {
+    align-items: center;
+    justify-content: space-between;
+    .job_resources {
+      padding: 5px;
+      border: solid 1px;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      text-align: center;
+      color: var(--blue);
+    }
+  }
+}
