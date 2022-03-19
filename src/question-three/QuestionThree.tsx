@@ -36,7 +36,7 @@ export const QuestionThree: React.FC<IAppTabContainer> = (props) => {
 
   return (
     <SectionGroup>
-      <SectionPanel className="question_3 flex">
+      <SectionPanel className="question__3 flex">
         <SideBar />
         <div className="main__container flex full-w">
           <Header />

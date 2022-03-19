@@ -28,7 +28,7 @@ const JobCard: React.FC<JobItemProps> = ({ item, index }) => {
               .utc(item.end)
               .format(TIME_FORMAT)}`}</div>
           </div>
-          {item.jobAllocations.length > 0 && <div className="job_resources">{item.jobAllocations.length}</div>}
+          {item.jobAllocations.length > 0 && <div className="job__resources">{item.jobAllocations.length}</div>}
         </div>
       </div>
     </div>
