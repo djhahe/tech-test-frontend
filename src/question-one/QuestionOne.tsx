@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-expressions */
-import React, { ChangeEvent, useState } from 'react';
+import _debounce from 'lodash-es/debounce';
+import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { IAppTabContainer, Job, Contact } from '../common/types';
 
 import { SectionGroup } from '../components/section/SectionGroup';
@@ -12,12 +12,12 @@ export const QuestionOne: React.FC<IAppTabContainer> = (props) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [searchResult, setSearchResult] = useState<(Pick<Job, 'name' | 'start' | 'end'> & { contact: Contact })[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const debounceSetSearchTerm = _debounce(setSearchTerm);
 
   /**
    * It makes an API call to the server to get the jobs with the search term.
-   * @param {string} searchTerm - string
    */
-  const searchJobs = async (searchTerm: string) => {
+  const searchJobs = useCallback(async () => {
     if (searchTerm) {
       if (searchTerm.length >= 3) {
         setIsLoading(true);
@@ -33,7 +33,11 @@ export const QuestionOne: React.FC<IAppTabContainer> = (props) => {
     } else {
       setSearchResult([]);
     }
-  };
+  }, [searchTerm, props.service]);
+
+  useEffect(() => {
+    searchJobs();
+  }, [searchJobs]);
 
   /**
    * It sets the search term to the value of the input and then calls the searchJobs function with the
@@ -42,8 +46,7 @@ export const QuestionOne: React.FC<IAppTabContainer> = (props) => {
    */
   const onSearchTermChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setSearchTerm(value);
-    searchJobs(value.trim());
+    debounceSetSearchTerm(value);
   };
 
   return (

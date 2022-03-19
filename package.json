@@ -15,6 +15,7 @@
     "dayjs": "^1.11.0",
     "graphql": "^14.7.0",
     "graphql-tag": "^2.10.4",
+    "lodash-es": "^4.17.21",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
@@ -28,6 +29,12 @@
     "eject": "react-scripts eject",
     "server:bootstrap": "cd ./src/server && yarn install",
     "server:start": "cd ./src/server && yarn dev"
+  },
+  "jest": {
+    "transformIgnorePatterns": [
+      "<rootDir>/node_modules/(?!lodash-es)",
+      "<rootDir>/node_modules/@types/(?!lodash-es)"
+    ]
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -45,6 +52,7 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash-es": "^4.17.6",
     "sass": "^1.49.9"
   }
 }

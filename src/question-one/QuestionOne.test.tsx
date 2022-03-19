@@ -31,26 +31,34 @@ test('Should not fetch job if input < 3 characters', async () => {
 });
 
 test('Should fetch job if input >= 3 characters', async () => {
+  jest.useFakeTimers();
   const { getByPlaceholderText, getByText } = render(<QuestionOne service={service} />);
   const searchField = getByPlaceholderText('Search') as HTMLInputElement;
   await act(async () => {
     fireEvent.change(searchField, { target: { value: 'Bui' } });
+    jest.advanceTimersByTime(500);
   });
+
   expect(service.getJobsWithSearchTerm).toHaveBeenCalled();
   expect(getByText(/Build a fence/i).textContent).toBe('Build a fence');
+  jest.useRealTimers();
 });
 
 test('Should clear jobs when clearing search field', async () => {
+  jest.useFakeTimers();
   const { getByPlaceholderText, getByText } = render(<QuestionOne service={service} />);
   const searchField = getByPlaceholderText('Search') as HTMLInputElement;
   await act(async () => {
     fireEvent.change(searchField, { target: { value: 'Bui' } });
+    jest.advanceTimersByTime(500);
   });
   expect(service.getJobsWithSearchTerm).toHaveBeenCalled();
   await act(async () => {
     fireEvent.change(searchField, { target: { value: '' } });
+    jest.advanceTimersByTime(500);
   });
   expect(getByText(/No job found/i).textContent).toBe('No job found');
+  jest.useRealTimers();
 });
 
 test('Should log error if has error on fetching jobs', async () => {
