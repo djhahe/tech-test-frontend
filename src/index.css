@@ -45,3 +45,8 @@ code {
 .flex {
   display: flex;
 }
+
+.bottom {
+  position: absolute;
+  bottom: 0;
+}
