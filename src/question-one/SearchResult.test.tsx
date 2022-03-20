@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 
 import { SearchResult } from './SearchResult';
-import mockJobContactData from './__mocks__/jobContactData';
+import mockJobContactData from '../__mocks__/jobContactData';
 
 jest.mock('../components/Spinner', () => {
   return {

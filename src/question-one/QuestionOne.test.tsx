@@ -1,8 +1,22 @@
 import React from 'react';
-import { render, fireEvent, act } from '@testing-library/react';
-import data from './__mocks__/jobContactData';
+import { render, fireEvent } from '@testing-library/react';
+import data from '../__mocks__/jobContactData';
 
 import { QuestionOne } from './QuestionOne';
+
+jest.mock('./SearchResult', () => {
+  return {
+    SearchResult: () => <div>Search Result</div>,
+  };
+});
+const mockSearchJobs = jest.fn();
+jest.mock('../hooks/useSearchJob', () => {
+  return {
+    useSearchJob: () => {
+      return { searchJobs: mockSearchJobs };
+    },
+  };
+});
 
 const service = {
   getJobs: jest.fn(),
@@ -16,64 +30,24 @@ const service = {
   }),
 };
 
-test('Should show search box and no data', async () => {
+beforeEach(() => {
+  jest.useFakeTimers();
+});
+afterEach(() => {
+  jest.useRealTimers();
+});
+
+test('Should show search box and search result component', async () => {
   const { getByPlaceholderText, getByText } = render(<QuestionOne service={service} />);
   const searchField = getByPlaceholderText('Search') as HTMLInputElement;
   expect(Boolean(searchField)).toBe(true);
-  expect(getByText(/No job found/i).textContent).toBe('No job found');
+  expect(getByText(/Search Result/i).textContent).toBe('Search Result');
 });
 
-test('Should not fetch job if input < 3 characters', async () => {
+test('Should update search box value  and do search on change', () => {
   const { getByPlaceholderText } = render(<QuestionOne service={service} />);
   const searchField = getByPlaceholderText('Search') as HTMLInputElement;
-  fireEvent.change(searchField, { target: { value: 'Te' } });
-  expect(service.getJobsWithSearchTerm).toHaveBeenCalledTimes(0);
-});
-
-test('Should fetch job if input >= 3 characters', async () => {
-  jest.useFakeTimers();
-  const { getByPlaceholderText, getByText } = render(<QuestionOne service={service} />);
-  const searchField = getByPlaceholderText('Search') as HTMLInputElement;
-  await act(async () => {
-    fireEvent.change(searchField, { target: { value: 'Bui' } });
-    jest.advanceTimersByTime(500);
-  });
-
-  expect(service.getJobsWithSearchTerm).toHaveBeenCalled();
-  expect(getByText(/Build a fence/i).textContent).toBe('Build a fence');
-  jest.useRealTimers();
-});
-
-test('Should clear jobs when clearing search field', async () => {
-  jest.useFakeTimers();
-  const { getByPlaceholderText, getByText } = render(<QuestionOne service={service} />);
-  const searchField = getByPlaceholderText('Search') as HTMLInputElement;
-  await act(async () => {
-    fireEvent.change(searchField, { target: { value: 'Bui' } });
-    jest.advanceTimersByTime(500);
-  });
-  expect(service.getJobsWithSearchTerm).toHaveBeenCalled();
-  await act(async () => {
-    fireEvent.change(searchField, { target: { value: '' } });
-    jest.advanceTimersByTime(500);
-  });
-  expect(getByText(/No job found/i).textContent).toBe('No job found');
-  jest.useRealTimers();
-});
-
-test('Should log error if has error on fetching jobs', async () => {
-  service.getJobsWithSearchTerm.mockImplementation(() => {
-    throw new Error('error');
-  });
-  const { getByPlaceholderText, getByText } = render(<QuestionOne service={service} />);
-  const searchField = getByPlaceholderText('Search') as HTMLInputElement;
-  await act(async () => {
-    fireEvent.change(searchField, { target: { value: 'Bui' } });
-  });
-  expect(service.getJobsWithSearchTerm).toHaveBeenCalled();
-  await act(async () => {
-    fireEvent.change(searchField, { target: { value: '' } });
-  });
-  expect(getByText(/No job found/i).textContent).toBe('No job found');
-  expect(console.error).toHaveBeenCalled();
+  fireEvent.change(searchField, { target: { value: 'Test' } });
+  expect(searchField.value).toBe('Test');
+  expect(mockSearchJobs).toHaveBeenCalledWith('Test');
 });
