@@ -2,7 +2,14 @@ import { useState, useCallback } from 'react';
 import { IDataService, Job, Contact } from '../common/types';
 import { debounce } from '../helper/debounce';
 
-export const useSearchJob = (searchService: IDataService['getJobsWithSearchTerm']) => {
+const DEFAULT_DELAY = 500;
+const DEFAULT_MIN_SEARCH_CHAR = 3;
+
+export const useSearchJob = (
+  searchService: IDataService['getJobsWithSearchTerm'],
+  debounceDelay: number = DEFAULT_DELAY,
+  minSearchChars: number = DEFAULT_MIN_SEARCH_CHAR,
+) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [searchResult, setSearchResult] = useState<(Pick<Job, 'name' | 'start' | 'end'> & { contact: Contact })[]>([]);
 
@@ -18,18 +25,19 @@ export const useSearchJob = (searchService: IDataService['getJobsWithSearchTerm'
         return;
       }
 
-      // Do search if search term >= 3 chars
-      if (searchTerm.length >= 3) {
+      // Do search if search term >= min search chars
+      if (searchTerm.length >= minSearchChars) {
         setIsLoading(true);
         try {
           const result = await searchService(searchTerm);
+
           setSearchResult(result);
         } catch (error) {
           setSearchResult([]);
         }
         setIsLoading(false);
       }
-    }, 500),
+    }, debounceDelay),
     [searchService],
   );
 

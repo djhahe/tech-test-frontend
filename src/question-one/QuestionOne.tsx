@@ -27,7 +27,7 @@ export const QuestionOne: React.FC<IAppTabContainer> = (props) => {
   return (
     <SectionGroup>
       <SectionPanel>
-        <input placeholder="Search" value={searchTerm} onChange={onSearchTermChange}></input>
+        <input type="search" placeholder="Search" value={searchTerm} onChange={onSearchTermChange}></input>
         <SearchResult isLoading={isLoading} searchResult={jobs} />
       </SectionPanel>
     </SectionGroup>

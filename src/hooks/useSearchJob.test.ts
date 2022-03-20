@@ -7,11 +7,12 @@ const getJobsWithSearchTerm = jest.fn(async (searchTerm: string) => {
 });
 
 beforeEach(() => {
-  getJobsWithSearchTerm.mockClear();
   jest.useFakeTimers();
 });
 afterEach(() => {
+  jest.clearAllTimers();
   jest.useRealTimers();
+  getJobsWithSearchTerm.mockClear();
   cleanup();
 });
 
@@ -22,18 +23,28 @@ test('Should return empty array if no search term', async () => {
   expect(jobs).toEqual([]);
 });
 
-test('Should not fetch jobs if input < 3 characters', async () => {
-  const { result } = renderHook(() => useSearchJob(getJobsWithSearchTerm));
+test('Should not fetch jobs if input length < min search characters', async () => {
+  const { result } = renderHook(() => useSearchJob(getJobsWithSearchTerm, undefined, 4));
   const { searchJobs, jobs } = result.current;
-  await searchJobs('Bu');
+  await searchJobs('Bui');
+  jest.advanceTimersByTime(500);
   expect(getJobsWithSearchTerm).toBeCalledTimes(0);
   expect(jobs).toEqual([]);
 });
 
-test('Should fetch jobs if input >= 3 characters', async () => {
+test('Should not fetch jobs if not reach the debounce delay yet', async () => {
+  const { result } = renderHook(() => useSearchJob(getJobsWithSearchTerm, 1000));
+  const { searchJobs, jobs } = result.current;
+  await searchJobs('Bui');
+  jest.advanceTimersByTime(500);
+  expect(getJobsWithSearchTerm).toBeCalledTimes(0);
+  expect(jobs).toEqual([]);
+});
+
+test('Should fetch jobs if input length >= min search characters', async () => {
   const { result } = renderHook(() => useSearchJob(getJobsWithSearchTerm));
   const { searchJobs, jobs } = result.current;
-  await searchJobs('Buil');
+  await searchJobs('Bui');
   jest.advanceTimersByTime(500);
   expect(getJobsWithSearchTerm).toBeCalledTimes(1);
   expect(jobs).toEqual([]);
